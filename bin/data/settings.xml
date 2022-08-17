@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<group>
+	<seed>1</seed>
+	<threshold>0.145</threshold>
+	<reaction>0.825</reaction>
+	<decay>0.815</decay>
+	<react>1</react>
+</group>
