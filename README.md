@@ -15,3 +15,7 @@ $ make RunRelease
    -- or --
 $ bin/lawki_player
 ```
+
+### Troubleshooting
+
+- make sure that `gstreamer` is version `1.18.5-1`, and not later.

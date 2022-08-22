@@ -1,7 +1,7 @@
 #include "stdlib.h"
 #include "ofApp.h"
 #include "ofConstants.h"
-
+#include "ofxJSON.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
