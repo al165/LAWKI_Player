@@ -8,7 +8,7 @@
 #   The location of your root openFrameworks installation
 #       (default) OF_ROOT = ../../.. 
 ################################################################################
-OF_ROOT = /home/lawki/openFrameworks
+#OF_ROOT = /home/lawki/openFrameworks
 
 ################################################################################
 # PROJECT ROOT

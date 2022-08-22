@@ -31,6 +31,7 @@
 .ccls__
 
 *.mp4
+!/bin/data/movies/lawki_logo.mp4
 
 ########################
 # IDE files which should

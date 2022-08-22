@@ -275,7 +275,7 @@ VideoTile::VideoTile(int num, int x, int y, int width, int height){
     currentVideo = "<default>";
 
     // Setup video player
-    player.load("movies/news.mp4");
+    player.load("movies/lawki_logo.mp4");
     player.setLoopState(OF_LOOP_NORMAL);
     player.play();
     videoInitialising = false;
@@ -369,6 +369,9 @@ void VideoTile::setVideo(string fp){
         currentVideo = fp;
     } catch (...) {
     	ofLog(OF_LOG_ERROR) << "error loading video";
+        player.loadAsync("movies/lawki_logo.mp4" + fp);
+        videoInitialising = true;
+        currentVideo = fp;
     }
 }
 
