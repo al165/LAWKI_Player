@@ -19,13 +19,16 @@ void ofApp::setup(){
 
     if(parseSuccessful){
         int num = 0;
+        string video_root = result["video_root"].asString();
+        ofLog() << "video_root: " << video_root;
         for(Json::ArrayIndex i=0; i < result["tiles"].size(); i++){
             VideoTile vt{
                 num, 
                 result["tiles"][i][0].asInt(), 
                 result["tiles"][i][1].asInt(), 
                 result["tiles"][i][2].asInt(), 
-                result["tiles"][i][3].asInt()
+                result["tiles"][i][3].asInt(),
+                video_root
             };
             num++;
             tiles.push_back(vt);   
@@ -256,7 +259,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
-VideoTile::VideoTile(int num, int x, int y, int width, int height){
+VideoTile::VideoTile(int num, int x, int y, int width, int height, string video_root){
     number = num;
     m_x = x;
     m_y = y;
@@ -268,6 +271,8 @@ VideoTile::VideoTile(int num, int x, int y, int width, int height){
     m_decay = 0.7; 
     m_reaction = 0.7; 
     m_react = true;
+
+    m_video_root = video_root;
 
     c = 0;
     paused = false;
@@ -311,7 +316,13 @@ VideoTile::VideoTile(int num, int x, int y, int width, int height){
     A2.bindBase(GL_SHADER_STORAGE_BUFFER, 1);
 }
 
-void VideoTile::update(float seed, float threshold, float reaction, float decay, bool react, ofColor color){
+void VideoTile::update(
+    float seed, 
+    float threshold, 
+    float reaction, 
+    float decay, 
+    bool react, 
+    ofColor color){
     if(player.isLoaded()){
         if(player.getWidth() > 0 && videoInitialising){
     	    // video has loaded, update rendering plane size
@@ -362,14 +373,14 @@ void VideoTile::update(float seed, float threshold, float reaction, float decay,
 }
 
 void VideoTile::setVideo(string fp){
-    player.close();
+    //player.close();
     try {
-        player.loadAsync("/mnt/usb/LAWKI_Passages/videos/" + fp);
+        player.loadAsync(m_video_root + fp);
         videoInitialising = true;
         currentVideo = fp;
     } catch (...) {
-    	ofLog(OF_LOG_ERROR) << "error loading video";
-        player.loadAsync("movies/lawki_logo.mp4" + fp);
+    	  ofLog(OF_LOG_ERROR) << "error loading video " + fp;
+        player.loadAsync("movies/lawki_logo.mp4");
         videoInitialising = true;
         currentVideo = fp;
     }

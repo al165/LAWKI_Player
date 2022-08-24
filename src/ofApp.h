@@ -10,7 +10,7 @@
 
 class VideoTile {
 	public:
-		VideoTile(int num, int x, int y, int width, int height);
+		VideoTile(int num, int x, int y, int width, int height, string video_root);
 		void update(float seed, float threshold, float reaction, float decay, bool react, ofColor color);
 		void draw(int debug_draw);
 		void close();
@@ -30,6 +30,8 @@ class VideoTile {
 	private:
 		int m_x, m_y;
 		int m_width, m_height;
+
+		string m_video_root;
 
 		ofBufferObject A1, A2;
 		ofVideoPlayer player;
