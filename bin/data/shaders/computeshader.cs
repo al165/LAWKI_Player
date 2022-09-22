@@ -4,7 +4,7 @@ layout(binding = 0) buffer dcA1 { float A1 [ ]; };
 layout(binding = 1) buffer dcA2 { float A2 [ ]; };
 
 layout(rgba8, binding = 2) uniform writeonly image2D img;
-layout(local_size_x = 20, local_size_y = 20, local_size_z = 1) in;
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 
 uniform ivec2 resolution;
 uniform sampler2DRect seedSource;

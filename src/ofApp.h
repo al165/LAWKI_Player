@@ -5,13 +5,13 @@
 #include "ofxOsc.h"
 #include "ofxJSON.h"
 
-#define W 1024
+#define W 1028
 #define H 768
 
 class VideoTile {
 	public:
 		VideoTile(int num, int x, int y, int width, int height);
-		void update(float seed, float threshold, float reaction, float decay, bool react, ofColor color);
+		void update(float seed, float threshold, float reaction, float decay, bool react, ofColor color, ofColor center);
 		void draw(int debug_draw);
 		void close();
 		void setVideo(string fp);
@@ -75,14 +75,16 @@ class ofApp : public ofBaseApp{
 		ofxOscReceiver receiver;
 		string lastOSC;
 
-		ofColor highlight;
+		Json::Value sensor_map;
+
+		ofColor highlight, center;
 		int recv_port;
 		int audio_port;
 
 		ofxPanel gui;
 		ofParameter<float> seed, threshold, decay, reaction;
 		ofParameter<bool> react;
-		ofxColorSlider center;
+		ofxColorSlider centerSlider, highlightSlider;
 };
 
 

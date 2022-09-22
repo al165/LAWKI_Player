@@ -16,6 +16,8 @@
 # general
 #########
 
+./compile_commands.json
+
 [Bb]uild/
 [Oo]bj/
 *.o

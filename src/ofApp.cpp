@@ -13,7 +13,16 @@ void ofApp::setup(){
 
     // Create video tiles
     ofxJSONElement result;
-    string tileSettings = "tiles.json";
+
+    ofFilePath fp;
+    string tileSettings = fp.join(fp.getUserHomeDir(), "lawki_config.json");
+    ofFile config_file(tileSettings);
+    if(!config_file.exists()){
+        ofLog() << "cannot find " << tileSettings;
+        tileSettings = "tiles.json";
+    }
+    ofLog() << tileSettings << " loading tile settings";
+
     bool parseSuccessful = result.open(tileSettings);
     ofColor highlight;
 
@@ -35,6 +44,7 @@ void ofApp::setup(){
 
         recv_port = result["port"].asInt();
         audio_port = result["audio_port"].asInt();
+        sensor_map = result["sensor_map"];
 
     } else {
         ofLogError("cannot parse `tiles.json` config file");
@@ -58,12 +68,12 @@ void ofApp::setup(){
     gui.add(reaction.set("reaction", 0.7, 0, 1));
     gui.add(decay.set("decay", 0.7, 0, 1));
     gui.add(react.set("react", true)); 
-    gui.add(center.setup("color", highlight, ofColor(0), ofColor(255)));
+    gui.add(highlightSlider.setup("highlight", highlight, ofColor(0), ofColor(255)));
+    gui.add(centerSlider.setup("color", center, ofColor(0), ofColor(255)));
     //center.addListener(this, &ofApp::colorChanged);
 
     ofSetLogLevel(OF_LOG_WARNING);
 }
-
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -104,20 +114,23 @@ void ofApp::update(){
             //ofLog() << "OSC: /video " << tile_number << " " << fp;
     	    //ofSetLogLevel(OF_LOG_WARNING);
 
-            for(size_t i=0; i < tiles.size(); i++){
-                tiles[i].setVolume(0.0);
-            }
-
     	    if((size_t)tile_number < tiles.size()){
+                for(size_t i=0; i < tiles.size(); i++){
+                    tiles[i].setVolume(0.0);
+                }
+
                 tiles[tile_number].setVideo(fp);
                 tiles[tile_number].setVolume(1.0);
     	    }
 
         } else if(m.getAddress() == "/sensor"){
-            int tile_number = m.getArgAsInt32(0);
+            int sensor_number = m.getArgAsInt32(0);
             int val = m.getArgAsInt32(1);
 
-            tiles[tile_number].active = (bool)val;
+            for(Json::Value::ArrayIndex i=0; i < sensor_map[sensor_number].size(); i++){
+                int tile_number = sensor_map[sensor_number][i].asInt();
+	            tiles[tile_number].active = (bool)val;
+            }
 
             //ofSetLogLevel(OF_LOG_NOTICE);
             //ofLog() << "OSC: /sensor " << tile_number << " " << val;
@@ -125,25 +138,25 @@ void ofApp::update(){
 
             // relay sensor data to sound server
             ofxOscMessage m;
-            m.setAddress("/sensor/" + ofToString(tile_number));
+            m.setAddress("/sensor/" + ofToString(sensor_number));
             m.addInt32Arg(val);
             sender.sendMessage(m, false);
-
+        } else if(m.getAddress() == "/debug"){
+        	debug = !debug; 
         } else {
     	    ofLog(OF_LOG_WARNING) << "OSC: " << m.getAddress() << " [unknown]";
         }
     }
 
     for(size_t i=0; i < tiles.size(); i++){
-    	tiles[i].update(seed.get(), threshold.get(), reaction.get(), decay.get(), react.get(), center);
+    	tiles[i].update(seed.get(), threshold.get(), reaction.get(), decay.get(), react.get(), highlightSlider, centerSlider);
     }
 }
 
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    //ofBackground(highlight[0], highlight[1], highlight[2]);
-    ofBackground(center);
+    ofBackground(highlightSlider);
 
     for (size_t i = 0; i < tiles.size(); i++) {
       tiles[i].draw(debug_draw = debug_draw * (int)debug);
@@ -311,7 +324,7 @@ VideoTile::VideoTile(int num, int x, int y, int width, int height){
     A2.bindBase(GL_SHADER_STORAGE_BUFFER, 1);
 }
 
-void VideoTile::update(float seed, float threshold, float reaction, float decay, bool react, ofColor color){
+void VideoTile::update(float seed, float threshold, float reaction, float decay, bool react, ofColor color, ofColor center){
     if(player.isLoaded()){
         if(player.getWidth() > 0 && videoInitialising){
     	    // video has loaded, update rendering plane size
@@ -330,7 +343,7 @@ void VideoTile::update(float seed, float threshold, float reaction, float decay,
     seedShader.begin();
     seedShader.setUniformTexture("video", currentFrame, 1);
     seedShader.setUniform1f("threshold", threshold);
-    seedShader.setUniform3f("center", 1.0, 1.0, 1.0);
+    seedShader.setUniform3f("center", center.r/255.0, center.g/255, center.b/255);
     plane.draw();
     seedShader.end();
     seedFbo.end();
@@ -357,14 +370,15 @@ void VideoTile::update(float seed, float threshold, float reaction, float decay,
     computeShader.setUniform1i("react", int(react));
     computeShader.setUniformTexture("seedSource", seedFbo.getTexture(), 3);
 
-    computeShader.dispatchCompute(m_width/20, m_height/20, 1);
+    computeShader.dispatchCompute(m_width/16, m_height/16, 1);
     computeShader.end();
 }
 
 void VideoTile::setVideo(string fp){
     player.close();
     try {
-        player.loadAsync("/mnt/usb/LAWKI_Passages/videos/" + fp);
+        //player.loadAsync("/mnt/usb/LAWKI_Passages/videos/" + fp);
+        player.loadAsync("/mnt/usb0/LAWKI_ALIVE/videos/" + fp);
         videoInitialising = true;
         currentVideo = fp;
     } catch (...) {
