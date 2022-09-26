@@ -370,7 +370,7 @@ void VideoTile::update(float seed, float threshold, float reaction, float decay,
     computeShader.setUniform1i("react", int(react));
     computeShader.setUniformTexture("seedSource", seedFbo.getTexture(), 3);
 
-    computeShader.dispatchCompute(m_width/16, m_height/16, 1);
+    computeShader.dispatchCompute(m_width/8, m_height/8, 1);
     computeShader.end();
 }
 

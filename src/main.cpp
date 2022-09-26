@@ -7,7 +7,15 @@ int main( ){
 
     ofxJSONElement result;
     ofxJSONElement windowSetings;    
-    string tileSettings = "tiles.json";
+
+    ofFilePath fp;
+    string tileSettings = fp.join(fp.getUserHomeDir(), "lawki_config.json");
+    ofFile config_file(tileSettings);
+    if(!config_file.exists()){
+        ofLog() << "cannot find " << tileSettings;
+        tileSettings = "tiles.json";
+    }
+    ofLog() << tileSettings << " loading tile settings";
     bool parseSuccessful = result.open(tileSettings);
 
     if(parseSuccessful){
@@ -24,7 +32,7 @@ int main( ){
 
    	settings.decorated = false;
    	settings.resizable = false;
-   	settings.windowMode = OF_WINDOW;
+   	settings.windowMode = OF_FULLSCREEN;
    	settings.setPosition(ofVec2f(windowSetings["x"].asInt(), windowSetings["y"].asInt()));
 
    	ofCreateWindow(settings);
