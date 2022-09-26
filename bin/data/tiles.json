@@ -11,5 +11,6 @@
 	"sensor_map": [[0], [1], [2]],
 	"highlight": [0, 0, 255],
 	"port": 1881,
-	"audio_port": 1999
+	"audio_port": 1999,
+	"video_root": "/mnt/usb/usb1/LAWKI_Passages/videos/"
 }

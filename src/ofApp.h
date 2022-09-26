@@ -31,6 +31,8 @@ class VideoTile {
 		int m_x, m_y;
 		int m_width, m_height;
 
+		string m_video_root;
+
 		ofBufferObject A1, A2;
 		ofVideoPlayer player;
 		ofTexture currentFrame;
