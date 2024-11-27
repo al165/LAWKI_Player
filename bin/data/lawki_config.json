@@ -1,0 +1,51 @@
+{
+	"window": {
+		"x": 0,
+		"y": 0,
+		"width": 1024,
+		"height": 760
+	},
+	"tiles": [
+		{
+			"x": 0,
+			"y": 0,
+			"width": 1024,
+			"height": 760,
+			"subsections": [
+				{
+					"sx": 128,
+					"sy": 128,
+					"sw": 256,
+					"sh": 256,
+					"dx": 172,
+					"dy": 172,
+					"dw": 168,
+					"dh": 168,
+					"flipX": true,
+					"flipY": false
+				}
+			]
+		}
+	],
+	"sensor_map": [
+		[
+			0
+		],
+		[
+			1
+		],
+		[
+			2
+		]
+	],
+	"highlight": [
+		0,
+		255,
+		0
+	],
+	"port": 1881,
+	"audio_port": 1999,
+	"video_root": "movies/",
+	"fullscreen": false,
+	"screenmap": "screenmap.jpg"
+}

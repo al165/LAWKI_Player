@@ -1,43 +1,50 @@
-#include "ofMain.h"
 #include "ofApp.h"
+#include "ofMain.h"
 #include "ofxJSON.h"
 
 //========================================================================
-int main( ){
+int main() {
 
-    ofxJSONElement result;
-    ofxJSONElement windowSetings;    
+	ofxJSONElement result;
+	ofxJSONElement windowSettings;
 
-    ofFilePath fp;
-    string tileSettings = fp.join(fp.getUserHomeDir(), "lawki_config.json");
-    ofFile config_file(tileSettings);
-    if(!config_file.exists()){
-        ofLog() << "cannot find " << tileSettings;
-        tileSettings = "tiles.json";
-    }
-    ofLog() << tileSettings << " loading tile settings";
-    bool parseSuccessful = result.open(tileSettings);
+	ofFilePath fp;
+	string tileSettings = fp.join(fp.getUserHomeDir(), "lawki_config.json");
+	ofFile config_file(tileSettings);
+	if (!config_file.exists()) {
+		ofLog() << "cannot find " << tileSettings;
+		tileSettings = "lawki_config.json";
+	}
+	ofLog() << tileSettings << " loading tile settings";
+	bool parseSuccessful = result.open(tileSettings);
 
-    if(parseSuccessful){
-        windowSetings = result["window"];
-    } else {
-        ofLogError("cannot parse `tiles.json` config file");
-        return 1;
-    }
+	if (parseSuccessful)
+		windowSettings = result["window"];
+	else {
+		ofLogError("cannot parse `tiles.json` config file");
+		return 1;
+	}
 
-    ofGLFWWindowSettings settings;
+	ofGLFWWindowSettings settings;
 
-   	settings.setSize(windowSetings["width"].asInt(), windowSetings["height"].asInt());
-   	settings.setGLVersion(3,2);
+	settings.setSize(windowSettings["width"].asInt(), windowSettings["height"].asInt());
+	settings.setGLVersion(3, 2);
 
-   	settings.decorated = false;
-   	settings.resizable = false;
-   	settings.windowMode = OF_FULLSCREEN;
-   	settings.setPosition(ofVec2f(windowSetings["x"].asInt(), windowSetings["y"].asInt()));
+	settings.decorated = false;
+	settings.resizable = false;
 
-   	ofCreateWindow(settings);
-   	ofSetWindowTitle("LAWKI-Passages");
+	if (result["fullscreen"].asBool()) {
+		ofLog() << "Fullscreen mode";
+		settings.windowMode = OF_FULLSCREEN;
+	} else {
+		ofLog() << "Windowed mode";
+		settings.windowMode = OF_WINDOW;
+	}
 
-    ofRunApp(new ofApp());
+	settings.setPosition(ofVec2f(windowSettings["x"].asInt(), windowSettings["y"].asInt()));
 
+	ofCreateWindow(settings);
+	ofSetWindowTitle("LAWKI - ARK");
+
+	ofRunApp(new ofApp());
 }

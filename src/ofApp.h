@@ -2,91 +2,109 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "ofxOsc.h"
 #include "ofxJSON.h"
+#include "ofxOsc.h"
 
 #define W 1028
 #define H 768
 
+struct SubSection {
+	float sx;
+	float sy;
+	float sw;
+	float sh;
+	float dx;
+	float dy;
+	float dw;
+	float dh;
+	bool flipX;
+	bool flipY;
+};
+
 class VideoTile {
-	public:
-		VideoTile(int num, int x, int y, int width, int height, string video_root);
-		void update(float seed, float threshold, float reaction, float decay, bool react, ofColor color, ofColor center);
-		void draw(int debug_draw);
-		void close();
-		void setVideo(string fp);
-		void setVolume(float vol);
-		void togglePause();
+public:
+	VideoTile(int num, int x, int y, int width, int height, string video_root);
+	void update(float seed, float threshold, float reaction, float decay, bool react, ofColor color, ofColor center);
+	void draw(int debug_draw);
+	void close();
+	void setVideo(string fp);
+	void setVolume(float vol);
+	void togglePause();
 
-    int number;
-		float m_seed, m_threshold, m_decay, m_reaction;
-		bool m_react;
-		ofColor m_color;
+	void addSubsection(SubSection s);
+	void addSubsection(float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, bool flipX, bool flipY);
 
-		bool paused;
-		bool active;
-		string currentVideo;
+	int number;
+	float m_seed, m_threshold, m_decay, m_reaction;
+	bool m_react;
+	ofColor m_color;
 
-	private:
-		int m_x, m_y;
-		int m_width, m_height;
+	bool paused;
+	bool active;
+	string currentVideo;
 
-		string m_video_root;
+private:
+	int m_x, m_y;
+	int m_width, m_height;
+	vector<SubSection> subsections;
 
-		ofBufferObject A1, A2;
-		ofVideoPlayer player;
-		ofTexture currentFrame;
-		bool videoInitialising;
-		ofShader shader, computeShader, seedShader;
-		ofTexture reactionTexture;
-		ofPlanePrimitive plane;
-		ofFbo fbo, seedFbo;
+	string m_video_root;
 
-		float A1cpu[W*H];
-		float A2cpu[W*H];
+	ofBufferObject A1, A2;
+	ofVideoPlayer player;
+	ofTexture currentFrame;
+	bool videoInitialising;
+	ofShader shader, computeShader, seedShader;
+	ofTexture reactionTexture;
+	ofPlanePrimitive plane;
+	ofFbo fbo, seedFbo;
 
-		int c;
+	float A1cpu[W * H];
+	float A2cpu[W * H];
+
+	int c;
 };
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp {
 
-	public:
-		void setup();
-		void update();
-		void draw();
-		void exit();
+public:
+	void setup();
+	void update();
+	void draw();
+	void exit();
 
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void mouseMoved(int x, int y);
+	void mouseDragged(int x, int y, int button);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void mouseEntered(int x, int y);
+	void mouseExited(int x, int y);
+	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
 
-        bool debug;
-        int debug_draw;
+	void newSensorValue(int sensor_number, int val);
 
-		vector<VideoTile> tiles;
+	bool debug;
+	int debug_draw;
+	ofImage screenmap;
 
-        ofxOscSender sender;
-		ofxOscReceiver receiver;
-		string lastOSC;
+	vector<VideoTile> tiles;
 
-		Json::Value sensor_map;
+	ofxOscSender sender;
+	ofxOscReceiver receiver;
+	string lastOSC;
 
-		ofColor highlight, center;
-		int recv_port;
-		int audio_port;
+	Json::Value sensor_map;
 
-		ofxPanel gui;
-		ofParameter<float> seed, threshold, decay, reaction;
-		ofParameter<bool> react;
-		ofxColorSlider centerSlider, highlightSlider;
+	ofColor highlight, center;
+	int recv_port;
+	int audio_port;
+
+	ofxPanel gui;
+	ofParameter<float> seed, threshold, decay, reaction;
+	ofParameter<bool> react;
+	ofxColorSlider centerSlider, highlightSlider;
 };
-
-
