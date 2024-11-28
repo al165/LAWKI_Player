@@ -528,6 +528,14 @@ void VideoTile::draw(int debug_draw = 0) {
 		ofDrawLine(m_x, m_y + m_height, m_x + m_width, m_y);
 
 		for (size_t i = 0; i < subsections.size(); i++) {
+			ofSetColor(0, 0, 255);
+			ofDrawRectangle(subsections[i].sx + m_x, subsections[i].sy + m_y, subsections[i].sw, subsections[i].sh);
+			ofDrawBitmapString("source", subsections[i].sx + m_x, subsections[i].sy + m_y - 3);
+
+			ofFill();
+			ofDrawCircle(subsections[i].sx + m_x + 5, subsections[i].sy + m_y + 5, 3);
+			ofNoFill();
+
 			ofSetColor(255, 0, 0);
 			ofDrawRectangle(subsections[i].dx + m_x, subsections[i].dy + m_y, subsections[i].dw, subsections[i].dh);
 			ofDrawBitmapString("destination", subsections[i].dx + m_x, subsections[i].dy + m_y - 3);
@@ -543,14 +551,6 @@ void VideoTile::draw(int debug_draw = 0) {
 
 			ofFill();
 			ofDrawCircle(tx, ty, 3);
-			ofNoFill();
-
-			ofSetColor(0, 0, 255);
-			ofDrawRectangle(subsections[i].sx + m_x, subsections[i].sy + m_y, subsections[i].sw, subsections[i].sh);
-			ofDrawBitmapString("source", subsections[i].sx + m_x, subsections[i].sy + m_y - 3);
-
-			ofFill();
-			ofDrawCircle(subsections[i].sx + m_x + 5, subsections[i].sy + m_y + 5, 3);
 			ofNoFill();
 		}
 
