@@ -39,6 +39,8 @@ public:
 	bool m_react;
 	ofColor m_color;
 
+	bool show_main;
+
 	bool paused;
 	bool active;
 	string currentVideo;

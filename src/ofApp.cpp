@@ -58,6 +58,9 @@ void ofApp::setup() {
 				}
 			}
 
+			if (!result["tiles"][i]["show"].isNull())
+				vt.show_main = result["tiles"][i]["show"].asBool();
+
 			num++;
 			tiles.push_back(vt);
 		}
@@ -285,7 +288,7 @@ void ofApp::keyPressed(int key) {
 //--------------------------------------------------------------
 void ofApp::newSensorValue(int sensor_number, int val) {
 
-	if (sensor_number >= sensor_map.size())
+	if ((size_t)sensor_number >= sensor_map.size())
 		return;
 
 	for (Json::Value::ArrayIndex i = 0; i < sensor_map[sensor_number].size(); i++) {
@@ -357,13 +360,16 @@ VideoTile::VideoTile(int num, int x, int y, int width, int height, string video_
 
 	m_video_root = video_root;
 
+	show_main = true;
+
 	c = 0;
 	paused = false;
 	active = true;
 	currentVideo = "<default>";
 
 	// Setup video player
-	player.load("movies/news.mp4");
+	// player.load("movies/news.mp4");
+	player.load("movies/lawki_logo.mp4");
 	player.setLoopState(OF_LOOP_NORMAL);
 	player.play();
 	videoInitialising = false;
@@ -489,7 +495,9 @@ void VideoTile::draw(int debug_draw = 0) {
 
 	switch (debug_draw) {
 	case 0:
-		fbo.draw(m_x, m_y, m_width, m_height);
+		if (show_main)
+			fbo.draw(m_x, m_y, m_width, m_height);
+
 		for (SubSection & s : subsections) {
 			float dx = s.dx + m_x;
 			float dy = s.dy + m_y;
@@ -558,6 +566,8 @@ void VideoTile::draw(int debug_draw = 0) {
 		ofDrawBitmapString(name, m_x + m_width / 2 - name.length() * 4, m_y + 50);
 		name = "active: " + ofToString(active);
 		ofDrawBitmapString(name, m_x + m_width / 2 - name.length() * 4, m_y + 62);
+		name = "show: " + ofToString(show_main);
+		ofDrawBitmapString(name, m_x + m_width / 2 - name.length() * 4, m_y + 74);
 		ofSetColor(255);
 	} break;
 	case 2:
