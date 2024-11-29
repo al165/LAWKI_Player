@@ -99,6 +99,8 @@ void ofApp::setup() {
 	//center.addListener(this, &ofApp::colorChanged);
 
 	ofSetLogLevel(OF_LOG_WARNING);
+
+	ofHideCursor();
 }
 
 //--------------------------------------------------------------
